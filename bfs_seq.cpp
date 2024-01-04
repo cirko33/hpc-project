@@ -1,83 +1,45 @@
-#include<iostream>
-#include<queue>
-#include<vector>
-#include <fstream>
-#include <omp.h>
+#include "common.hpp"
 
 using namespace std;
-
-template<typename T>
-using Matrix = vector<vector<T>>;
-
-template<typename T>
-Matrix<T> make_matrix(int n, T value = T()) {
-    return vector<vector<T>>(n, vector<T>(n, value));
-} 
-
-struct Point { int x, y; };
-
-Matrix<char> read_maze(int n) {
-    ifstream file("./resources/maze_" + to_string(n) + ".txt", ios::in);
-    Matrix<char> maze = make_matrix<char>(n);
-
-    string line;
-    for(int i = 0; i < n; i++) {
-        getline(file, line);
-        for(int j=0; j<n; j++)
-            maze[i][j] = line[j];
-    }
-
-    return maze;
-}
-
-void print_path(vector<Point>& path) {
-    ofstream file("./resources/path.txt", ios::out);
-    for(auto p : path)
-        file << p.x << "," << p.y << endl;
-
-    file.close();
-}
 
 void bfs(Matrix<char>& maze, char wall, int n) {
     queue<vector<Point>> q;
     Matrix<bool> visited = make_matrix<bool>(n, false);
     q.push(vector<Point>(1, {0, 0}));
+    const int dx[] = {-1, 1, 0, 0};
+    const int dy[] = {0, 0, -1, 1};
+    const int LEN = 4;
+    int i, j, k, ni, nj;
+    Point back;
+    vector<Point> current;
 
     while (!q.empty()) {
-        vector<Point> current = q.front();
+        current = q.front();
         q.pop();
-        Point back = current.back();
-        int i = back.x, j = back.y;
+        back = current.back();
+        i = back.x, j = back.y;
 
         if(visited[i][j]) continue;
         visited[i][j] = true;
 
         if(i == n-1 && j == n-1) {
             cout << "Path found" << endl;
-            print_path(current);
+            print_path(current, "seq");
             break;
         }
-            
-        if(i > 0 && maze[i-1][j] != wall && !visited[i-1][j]) {
-            vector<Point> next(current);
-            next.push_back({i-1, j});
-            q.push(next);
-        }
-        if(i < n-1 && maze[i+1][j] != wall && !visited[i+1][j]) {
-            vector<Point> next(current);
-            next.push_back({i+1, j});
-            q.push(next);
-        }
-        if(j > 0 && maze[i][j-1] != wall && !visited[i][j-1]) {
-            vector<Point> next(current);
-            next.push_back({i, j-1});
-            q.push(next);
-        }
-        if(j < n-1 && maze[i][j+1] != wall && !visited[i][j+1]) {
-            vector<Point> next(current);
-            next.push_back({i, j+1});
-            q.push(next);
-        }
+
+        for (k = 0; k < LEN; ++k) {
+            ni = i + dx[k];
+            nj = j + dy[k];
+
+            if (ni >= 0 && ni < n && nj >= 0 && nj < n &&
+                maze[ni][nj] != wall && !visited[ni][nj]) {
+                vector<Point> next(current);
+                next.push_back({ni, nj});
+                #pragma omp critical
+                q.push(next);
+            }
+        } 
     }
 }
 
@@ -99,6 +61,6 @@ int main(int argc, char** argv)
     Matrix<char> maze = read_maze(n);
 
     bfs(maze, wall, n);
-    cout << "Time: " << omp_get_wtime() - start << endl;
+    cout << "Seq. time: " << omp_get_wtime() - start << endl;
     return 0;
 }
