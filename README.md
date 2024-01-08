@@ -10,18 +10,25 @@ Prerequirements:
 
 First run command for package installation:
 ```
-pip install mathplotlib numpy
+pip install mathplotlib numpy networkx
 ```
 
-Run command for shell script:
+Run commands for shell scripts:
 ```
-chmod +x run.sh
+chmod +x maze_run.sh
+chmod +x graph_run.sh
 ```
 
-Run solution:
+Run for maze testing:
 ```
-./run.sh <dimension>
+./maze_run.sh <dimension>
 ```
 where dimension is n for maze nxn
+
+Run for graph testing:
+```
+./graph_run.sh <n> <start> <finish>
+```
+where n is number of vertices and start is starting point, finish is finishing point
 
 **Thank you for your time!**

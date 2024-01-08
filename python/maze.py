@@ -1,3 +1,4 @@
+from math import sqrt
 import os
 import random
 
@@ -8,7 +9,7 @@ def generate_maze(rows, cols):
     while stack:
         x, y = stack[-1]
         maze[x][y] = '+'
-        neighbors = [(dx, dy) for dx, dy in [(0, 2), (2, 0), (0, -2), (-2, 0)]]
+        neighbors = [(dx, dy) for dx, dy in [(0, 2), (2, 0), (0, -2), (-2, 0)] * 5]
         random.shuffle(neighbors)
 
         found = False
@@ -16,6 +17,7 @@ def generate_maze(rows, cols):
             nx, ny = x + dx, y + dy
             if 0 <= nx < rows and 0 <= ny < cols and maze[nx][ny] == '#':
                 maze[x + dx // 2][y + dy // 2] = '+'
+                maze[nx][ny] = '+'
                 stack.append((nx, ny))
                 found = True
                 break
@@ -24,7 +26,7 @@ def generate_maze(rows, cols):
             stack.pop()
 
     maze[rows - 1][cols - 1] = '+'
-    maze[rows - 2][cols - 1] = '+'
+    maze[rows - 1][cols - 2] = '+'
     return maze
 
 def print_maze(maze, rows):

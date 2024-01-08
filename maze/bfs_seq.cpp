@@ -36,7 +36,6 @@ void bfs(Matrix<char>& maze, char wall, int n) {
                 maze[ni][nj] != wall && !visited[ni][nj]) {
                 vector<Point> next(current);
                 next.push_back({ni, nj});
-                #pragma omp critical
                 q.push(next);
             }
         } 

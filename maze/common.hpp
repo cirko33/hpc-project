@@ -5,6 +5,7 @@
 #include<fstream>
 #include<omp.h>
 
+#define NUM_THREADS 16
 using namespace std;
 
 template<typename T>
@@ -31,6 +32,21 @@ Matrix<char> read_maze(int n) {
 
     string line;
     for(int i = 0; i < n; i++) {
+        getline(file, line);
+        for(int j=0; j<n; j++)
+            maze[i][j] = line[j];
+    }
+
+    return maze;
+}
+
+Matrix<char> read_maze_parallel(int n) {
+    ifstream file("./resources/maze_" + to_string(n) + ".txt", ios::in);
+    Matrix<char> maze = make_matrix<char>(n);
+
+    #pragma omp parallel for
+    for(int i = 0; i < n; i++) {
+        string line;
         getline(file, line);
         for(int j=0; j<n; j++)
             maze[i][j] = line[j];

@@ -75,6 +75,6 @@ int main(int argc, char** argv)
     Matrix<char> maze = read_maze(n);
 
     bfs(maze, wall, n);
-    cout << "OMP while time: " << omp_get_wtime() - start << endl;
+    cout << "omp while time: " << omp_get_wtime() - start << endl;
     return 0;
 }
