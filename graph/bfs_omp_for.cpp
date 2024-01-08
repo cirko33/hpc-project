@@ -31,27 +31,27 @@ void bfs(EdgeMap edges, int n, int start, int end) {
                 current = q.front();
                 q.pop();
             }
+            if(found) continue;
 
             back = current.back();
-            if(!visited[back])
-            {
+            if(visited[back]) continue;
                 visited[back] = true;
 
-                if(back == end && !found) {
-                    found = true;
-                    cout << "Path found" << endl;
-                    print_path(current, "omp_for");;
-                }
-
-                edges_back = edges[back];
-                for(int i = 0; i < edges_back.size(); i++) {
-                    if(visited[edges_back[i]]) continue;
-                    vector<int> new_path(current);
-                    new_path.push_back(edges_back[i]);
-                    #pragma omp critical
-                    q.push(new_path);
-                } 
+            if(back == end && !found) {
+                found = true;
+                cout << "Path found" << endl;
+                print_path(current, "omp_for");
+                continue;
             }
+
+            edges_back = edges[back];
+            for(int i = 0; i < edges_back.size(); i++) {
+                if(visited[edges_back[i]]) continue;
+                vector<int> new_path(current);
+                new_path.push_back(edges_back[i]);
+                #pragma omp critical
+                q.push(new_path);
+            } 
         }
     }
 

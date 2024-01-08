@@ -12,37 +12,24 @@ void generateGraph(int n, const string& filename, int start, int end) {
     const int MAX_NEIGHBOURS = 10;
     double times = omp_get_wtime();
     srand(time(0));
-    vector<vector<int>> graph(n, vector<int>(n, 0));
-    #pragma omp parallel for
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < (rand() % MAX_NEIGHBOURS) + 1; j++) {
-            graph[i][rand() % n] = 1;
-        }
-    }
-
-    // int first, second = start;
-    // for(int i = 0; i < MAX_NEIGHBOURS; i++) {
-    //     first = second;
-    //     second = rand() % n;
-    //     graph[first][second] = 1;
-    // }
-    // graph[second][end] = 1;
-
     ofstream outputFile(filename, ios::out);
-    char comma = ',';
+
 
     #pragma omp parallel for
     for (int i = 0; i < n; i++) {
+        vector<bool> graph = vector<bool>(n, false);
         string str = "";
-        for (int j = 0; j < n; j++) {
-            if (graph[i][j] == 1) {
-                if(i == j) continue;
-                str += to_string(i) + ',' + to_string(j) + '\n';
-            }
+        for (int j = 0; j < (rand() % MAX_NEIGHBOURS) + 1; j++) {
+            int neighbour = rand() % n;
+            if (neighbour == i) continue;
+            if(graph[neighbour]) continue;
+            graph[neighbour] = true;
+            str += to_string(i) + ',' + to_string(neighbour) + '\n';
         }
         #pragma omp critical
         outputFile << str;
     }
+
     outputFile.close();
     cout << "Graph with " << n << " vertices generated and written to " << filename << endl;
     cout << "Time taken: " << omp_get_wtime() - times << " seconds" << endl;
