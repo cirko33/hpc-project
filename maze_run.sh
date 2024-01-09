@@ -9,20 +9,20 @@ fi
 
 python3 python/maze.py $1
 
-g++ ./maze/bfs_seq.cpp -fopenmp -o bfs_seq
+g++ ./maze/bfs_seq.cpp -fopenmp -O2 -o bfs_seq
 mv bfs_seq ./exec
 ./exec/bfs_seq $1
 
 sleep 1
 
-g++ ./maze/bfs_omp_for.cpp -fopenmp -O3 -o bfs_omp_for
+g++ ./maze/bfs_omp_for.cpp -fopenmp -O2 -o bfs_omp_for
 
 mv bfs_omp_for ./exec
 ./exec/bfs_omp_for $1
 
 sleep 1
 
-g++ ./maze/bfs_omp_while.cpp -fopenmp -O3 -o bfs_omp_while
+g++ ./maze/bfs_omp_while.cpp -fopenmp -O2 -o bfs_omp_while
 
 mv bfs_omp_while ./exec
 ./exec/bfs_omp_while $1

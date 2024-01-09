@@ -39,8 +39,7 @@ void bfs(EdgeMap edges, int n, int start, int end) {
                     new_path.push_back(edges_back[i]);
                     if(edges_back[i] == end && !found) {
                         found = true;
-                        cout << "Path found" << endl;
-                        print_path(new_path, "omp_while");;
+                        print_path(new_path, "omp_while");
                     } else {
                         #pragma omp critical
                         q.push(new_path);

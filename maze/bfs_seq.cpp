@@ -23,7 +23,6 @@ void bfs(Matrix<char>& maze, char wall, int n) {
         visited[i][j] = true;
 
         if(i == n-1 && j == n-1) {
-            cout << "Path found" << endl;
             print_path(current, "seq");
             break;
         }

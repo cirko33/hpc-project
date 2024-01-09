@@ -5,26 +5,19 @@ using namespace std;
 void bfs(EdgeMap edges, int n, int start, int end) {
     queue<vector<int>> q;
     bool visited[n] = {false};
-    {
-        vector<int> st = edges[start];
-        #pragma omp parallel for
-        for(int i = 0; i < st.size(); i++) {
-            vector<int> path(1, start);
-            path.push_back(st[i]);
-            #pragma omp critical
-            q.push(path);
-        }
-        visited[start] = true;
+    for(auto it = edges[start].begin(); it != edges[start].end(); ++it) {
+        vector<int> path(1, start);
+        path.push_back(*it);
+        q.push(path);
     }
 
     int back;
     vector<int> current, edges_back;
     bool found = false;
     
-    #pragma omp parallel
     while (!found)
     {
-        #pragma omp for private(current, edges_back, back)
+        #pragma omp parallel for private(current, edges_back, back)
         for(int i = 0; i < q.size(); i++) {
             #pragma omp critical
             {
@@ -32,14 +25,13 @@ void bfs(EdgeMap edges, int n, int start, int end) {
                 q.pop();
             }
             if(found) continue;
-
+            
             back = current.back();
             if(visited[back]) continue;
-                visited[back] = true;
+            visited[back] = true;
 
             if(back == end && !found) {
                 found = true;
-                cout << "Path found" << endl;
                 print_path(current, "omp_for");
                 continue;
             }

@@ -24,7 +24,6 @@ void bfs(EdgeMap edges, int n, int start, int end) {
         visited[back] = true;
 
         if(back == end) {
-            cout << "Path found" << endl;
             print_path(current, "seq");
             return;
         }
@@ -38,6 +37,7 @@ void bfs(EdgeMap edges, int n, int start, int end) {
     }
 
     cout << "Path not found :(" << endl;
+    //exit(1);
 }
 
 int main(int argc, char** argv)

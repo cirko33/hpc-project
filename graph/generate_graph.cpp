@@ -8,18 +8,16 @@
 
 using namespace std;
 
-void generateGraph(int n, const string& filename, int start, int end) {
-    const int MAX_NEIGHBOURS = 10;
+void generateGraph(int n, const string& filename, int max_neighbors = 10) {
     double times = omp_get_wtime();
     srand(time(0));
     ofstream outputFile(filename, ios::out);
-
 
     #pragma omp parallel for
     for (int i = 0; i < n; i++) {
         vector<bool> graph = vector<bool>(n, false);
         string str = "";
-        for (int j = 0; j < (rand() % MAX_NEIGHBOURS) + 1; j++) {
+        for (int j = 0; j < (rand() % max_neighbors) + 1; j++) {
             int neighbour = rand() % n;
             if (neighbour == i) continue;
             if(graph[neighbour]) continue;
@@ -36,14 +34,14 @@ void generateGraph(int n, const string& filename, int start, int end) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 4) {
-        cerr << "Usage: " << argv[0] << " <number_of_vertices> <start> <end>" << endl;
+    if (argc < 2) {
+        cerr << "Usage: " << argv[0] << " <number_of_vertices> [max_neighbors]" << endl;
         return 1;
     }
 
     int n = atoi(argv[1]);
-    int start = atoi(argv[2]);
-    int end = atoi(argv[3]);
+    int max_neighbors = 10;
+    if(argc == 3) max_neighbors = atoi(argv[2]);
 
     if (n <= 0) {
         cerr << "Number of vertices must be a positive integer." << endl;
@@ -51,7 +49,7 @@ int main(int argc, char *argv[]) {
     }
 
     string filename = "./resources/graph_edges.txt";
-    generateGraph(n, filename, start, end);
+    generateGraph(n, filename, max_neighbors);
 
     return 0;
 }

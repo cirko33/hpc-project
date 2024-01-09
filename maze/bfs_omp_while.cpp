@@ -10,47 +10,37 @@ void bfs(Matrix<char>& maze, char wall, int n) {
     const int dy[] = {0, 0, -1, 1};
     const int LEN = 4;
 
-    bool found = false;
     int i, j, k, ni, nj;
     Point back;
     vector<Point> current;
  
     #pragma omp parallel
-    {
-        #pragma omp single nowait
-        while (!q.empty()) {
-            current = q.front();
-            q.pop();
-            back = current.back();
-            i = back.x, j = back.y;
+    #pragma omp single nowait
+    while (!q.empty()) {
+        current = q.front();
+        q.pop();
+        back = current.back();
+        i = back.x, j = back.y;
 
-            if (visited[i][j]) continue;            
-            #pragma omp critical
-            visited[i][j] = true;
+        if (visited[i][j]) continue;            
+        visited[i][j] = true;
 
-            if (i == n - 1 && j == n - 1) {
+        if (i == n - 1 && j == n - 1) {
+            print_path(current, "omp_while");
+            break;
+        }
+
+        #pragma omp taskloop private(ni, nj, k) shared(current)
+        for (k = 0; k < LEN; ++k) {
+            ni = i + dx[k];
+            nj = j + dy[k];
+
+            if (ni >= 0 && ni < n && nj >= 0 && nj < n &&
+                maze[ni][nj] != wall && !visited[ni][nj]) {
+                vector<Point> next(current);
+                next.push_back({ni, nj});
                 #pragma omp critical
-                {
-                    cout << "Path found" << endl;
-                    print_path(current, "omp_while");
-                }
-                break;
-            }
-
-            #pragma omp taskloop private(ni, nj, k) shared(current)
-            for (k = 0; k < LEN; ++k) {
-                ni = i + dx[k];
-                nj = j + dy[k];
-
-                if (ni >= 0 && ni < n && nj >= 0 && nj < n &&
-                    maze[ni][nj] != wall && !visited[ni][nj]) {
-                    vector<Point> next(current);
-                    next.push_back({ni, nj});
-                    #pragma omp critical
-                    {
-                        q.push(next);
-                    }
-                }
+                q.push(next);
             }
         }
     }
