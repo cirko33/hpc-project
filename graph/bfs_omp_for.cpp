@@ -5,16 +5,11 @@ using namespace std;
 void bfs(EdgeMap edges, int n, int start, int end) {
     queue<vector<int>> q;
     bool visited[n] = {false};
-    for(auto it = edges[start].begin(); it != edges[start].end(); ++it) {
-        vector<int> path(1, start);
-        path.push_back(*it);
-        q.push(path);
-    }
+    q.push(vector<int>(1, start));
 
     int back;
     vector<int> current, edges_back;
     bool found = false;
-    
     while (!found)
     {
         #pragma omp parallel for private(current, edges_back, back)

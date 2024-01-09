@@ -5,13 +5,7 @@ using namespace std;
 void bfs(EdgeMap edges, int n, int start, int end) {
     queue<vector<int>> q;
     bool visited[n] = {false};
-    for(auto it = edges[start].begin(); it != edges[start].end(); ++it) {
-        vector<int> path(1, start);
-        path.push_back(*it);
-        q.push(path);
-    }
-    visited[start] = true;
-
+    q.push(vector<int>(1, start));
     int back;
     vector<int> current;
     
@@ -37,7 +31,7 @@ void bfs(EdgeMap edges, int n, int start, int end) {
     }
 
     cout << "Path not found :(" << endl;
-    //exit(1);
+    exit(1);
 }
 
 int main(int argc, char** argv)

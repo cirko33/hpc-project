@@ -5,17 +5,7 @@ using namespace std;
 void bfs(EdgeMap edges, int n, int start, int end) {
     queue<vector<int>> q;
     bool visited[n] = {false};
-    {
-        vector<int> st = edges[start];
-        #pragma omp parallel for
-        for(int i = 0; i < st.size(); i++) {
-            vector<int> path(1, start);
-            path.push_back(st[i]);
-            #pragma omp critical
-            q.push(path);
-        }
-        visited[start] = true;
-    }
+    q.push(vector<int>(1, start));
 
     int back;
     vector<int> current, edges_back;
